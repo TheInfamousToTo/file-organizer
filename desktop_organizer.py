@@ -3,6 +3,7 @@ import os
 import glob
 import shutil
 
+
 # define the path of the desktop
 path = os.path.join(os.path.expanduser("~"), "Desktop")
 
