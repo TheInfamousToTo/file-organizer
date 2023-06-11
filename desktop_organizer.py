@@ -25,8 +25,6 @@ file_types = {
     "xlsx": "excel", 
     "pptx": "documents",
     "exe": "apps",
-    # add more file types and folder names as needed
-    # added
     "py": "codes", 
     "c": "codes", 
     "cpp": "codes", 
@@ -56,7 +54,6 @@ file_types = {
     "msi": "codes",
     "out": "codes",
     "ahk": "codes", 
-    # added
     "zip": "compressed", 
     "rar": "compressed", 
     "7z": "compressed",
@@ -68,7 +65,6 @@ file_types = {
     "pkg": "compressed",
     "tgz": "compressed",
     "z": "compressed",
-    # added
     "lnk": "shortcuts", 
 }
 
