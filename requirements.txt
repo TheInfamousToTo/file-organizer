@@ -1,0 +1,16 @@
+# No external dependencies required
+# The improved desktop organizer uses only Python standard library modules:
+# - os
+# - glob  
+# - shutil
+# - logging
+# - argparse
+# - sys
+# - pathlib
+# - datetime
+# - typing
+
+# For development and testing (optional):
+# pytest>=6.0.0
+# black>=21.0.0
+# flake8>=3.8.0
