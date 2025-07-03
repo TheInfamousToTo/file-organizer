@@ -1,7 +1,7 @@
 @echo off
-REM Desktop Organizer Batch Script with Interactive Menu
+REM Desktop Organizer Batch Script - Windows Compatible
 REM Organizes files on desktop into categorized folders
-REM Author: Windows-optimized version with dry run functionality
+REM Author: Windows-optimized version with improved syntax
 REM Compatible with Windows 7, 8, 10, 11
 
 setlocal enabledelayedexpansion
@@ -13,6 +13,7 @@ REM Verify desktop path exists
 if not exist "%DESKTOP_PATH%" (
     echo ERROR: Desktop folder not found at %DESKTOP_PATH%
     echo Please make sure your Desktop folder exists.
+    echo Expected location: %USERPROFILE%\Desktop
     echo.
     pause
     exit /b 1
@@ -34,31 +35,32 @@ echo 1. Dry Run (Preview organization without moving files)
 echo 2. Organize (Actually move files)
 echo 3. Exit
 echo ==================================================
+echo Target: %DESKTOP_PATH%
+echo ==================================================
 echo.
 set /p CHOICE="Please select an option (1-3): "
 
-if "%CHOICE%"=="1" (
-    set "DRY_RUN=true"
-    goto START_ORGANIZATION
-)
-if "%CHOICE%"=="2" (
-    set "DRY_RUN=false"
-    echo.
-    echo WARNING: This will actually move your files!
-    set /p CONFIRM="Are you sure you want to continue? (Y/N): "
-    if /i "!CONFIRM!"=="Y" goto START_ORGANIZATION
-    if /i "!CONFIRM!"=="YES" goto START_ORGANIZATION
-    echo Operation cancelled.
-    echo.
-    pause
-    goto MAIN_MENU
-)
-if "%CHOICE%"=="3" (
-    echo Thank you for using Desktop Organizer!
-    goto END
-)
+if "%CHOICE%"=="1" goto DRY_RUN_MODE
+if "%CHOICE%"=="2" goto ORGANIZE_MODE
+if "%CHOICE%"=="3" goto EXIT_PROGRAM
 
 echo Invalid choice. Please enter 1, 2, or 3.
+echo.
+pause
+goto MAIN_MENU
+
+:DRY_RUN_MODE
+set "DRY_RUN=true"
+goto START_ORGANIZATION
+
+:ORGANIZE_MODE
+set "DRY_RUN=false"
+echo.
+echo WARNING: This will actually move your files!
+set /p CONFIRM="Are you sure you want to continue? (Y/N): "
+if /i "%CONFIRM%"=="Y" goto START_ORGANIZATION
+if /i "%CONFIRM%"=="YES" goto START_ORGANIZATION
+echo Operation cancelled.
 echo.
 pause
 goto MAIN_MENU
@@ -100,15 +102,15 @@ call :CreateFolder "other"
 
 REM Organize image files
 echo Organizing image files...
-call :MoveFiles "images" "*.jpg *.jpeg *.png *.gif *.bmp *.tiff *.tif *.svg *.webp *.ico *.raw"
+call :MoveFiles "images" "*.jpg *.jpeg *.png *.gif *.bmp *.tiff *.tif *.svg *.webp *.ico *.raw *.psd"
 
 REM Organize video files
 echo Organizing video files...
-call :MoveFiles "videos" "*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm *.m4v *.3gp *.mpg *.mpeg"
+call :MoveFiles "videos" "*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm *.m4v *.3gp *.mpg *.mpeg *.ogv"
 
 REM Organize audio files
 echo Organizing audio files...
-call :MoveFiles "audio" "*.mp3 *.wav *.flac *.aac *.ogg *.wma *.m4a *.opus *.aiff"
+call :MoveFiles "audio" "*.mp3 *.wav *.flac *.aac *.ogg *.wma *.m4a *.opus *.aiff *.amr"
 
 REM Organize document files
 echo Organizing document files...
@@ -124,7 +126,7 @@ call :MoveFiles "presentations" "*.ppt *.pptx *.odp *.key"
 
 REM Organize code files
 echo Organizing code files...
-call :MoveFiles "code" "*.py *.js *.html *.css *.java *.cpp *.c *.h *.php *.rb *.go *.rs *.swift *.kt *.json *.xml *.yaml *.yml *.sql *.md *.bat *.cmd *.ps1 *.sh"
+call :MoveFiles "code" "*.py *.js *.html *.css *.java *.cpp *.c *.h *.php *.rb *.go *.rs *.swift *.kt *.json *.xml *.yaml *.yml *.sql *.md *.bat *.cmd *.ps1 *.sh *.ini *.cfg"
 
 REM Organize application files
 echo Organizing application files...
@@ -132,7 +134,7 @@ call :MoveFiles "applications" "*.exe *.msi *.deb *.rpm *.dmg *.pkg *.app *.apk"
 
 REM Organize archive files
 echo Organizing archive files...
-call :MoveFiles "archives" "*.zip *.rar *.7z *.tar *.gz *.xz *.bz2 *.tgz *.tbz2"
+call :MoveFiles "archives" "*.zip *.rar *.7z *.tar *.gz *.xz *.bz2 *.tgz *.tbz2 *.z *.lz *.lzma"
 
 REM Organize font files
 echo Organizing font files...
@@ -148,29 +150,7 @@ call :MoveFiles "shortcuts" "*.lnk *.url *.desktop"
 
 REM Move remaining files to "other" folder
 echo Organizing remaining files...
-for %%f in ("%DESKTOP_PATH%\*.*") do (
-    if exist "%%f" (
-        if not exist "%DESKTOP_PATH%\other\%%~nxf" (
-            if "%DRY_RUN%"=="true" (
-                echo [DRY RUN] Would move: %%~nxf ^-^> other
-                set /a FILES_MOVED+=1
-            ) else (
-                move "%%f" "%DESKTOP_PATH%\other\" >nul 2>&1
-                if !errorlevel! equ 0 (
-                    echo Moved: %%~nxf ^-^> other
-                    set /a FILES_MOVED+=1
-                )
-            )
-        ) else (
-            if "%DRY_RUN%"=="true" (
-                echo [DRY RUN] Would skip: %%~nxf (already exists in other)
-            ) else (
-                echo Skipped: %%~nxf (already exists in other)
-            )
-            set /a FILES_SKIPPED+=1
-        )
-    )
-)
+call :MoveOtherFiles
 
 REM Display summary
 echo.
@@ -198,8 +178,9 @@ echo.
 pause
 goto MAIN_MENU
 
-:END
-echo Goodbye!
+:EXIT_PROGRAM
+echo Thank you for using Desktop Organizer!
+echo.
 pause >nul
 exit /b 0
 
@@ -228,28 +209,48 @@ set "PATTERNS=%~2"
 for %%p in (%PATTERNS%) do (
     for %%f in ("%DESKTOP_PATH%\%%p") do (
         if exist "%%f" (
-            if not exist "%DESKTOP_PATH%\%FOLDER_NAME%\%%~nxf" (
-                if "%DRY_RUN%"=="true" (
-                    echo [DRY RUN] Would move: %%~nxf ^-^> %FOLDER_NAME%
-                    set /a FILES_MOVED+=1
-                ) else (
-                    move "%%f" "%DESKTOP_PATH%\%FOLDER_NAME%\" >nul 2>&1
-                    if !errorlevel! equ 0 (
-                        echo Moved: %%~nxf ^-^> %FOLDER_NAME%
-                        set /a FILES_MOVED+=1
-                    ) else (
-                        echo Error moving: %%~nxf
-                    )
-                )
-            ) else (
-                if "%DRY_RUN%"=="true" (
-                    echo [DRY RUN] Would skip: %%~nxf (already exists in %FOLDER_NAME%)
-                ) else (
-                    echo Skipped: %%~nxf (already exists in %FOLDER_NAME%)
-                )
-                set /a FILES_SKIPPED+=1
-            )
+            call :ProcessFile "%%f" "%FOLDER_NAME%"
         )
+    )
+)
+goto :eof
+
+REM Function to process individual files
+:ProcessFile
+set "FILE_PATH=%~1"
+set "TARGET_FOLDER=%~2"
+set "FILE_NAME=%~nx1"
+
+if exist "%DESKTOP_PATH%\%TARGET_FOLDER%\%FILE_NAME%" (
+    REM File already exists
+    if "%DRY_RUN%"=="true" (
+        echo [DRY RUN] Would skip: %FILE_NAME% (already exists in %TARGET_FOLDER%)
+    ) else (
+        echo Skipped: %FILE_NAME% (already exists in %TARGET_FOLDER%)
+    )
+    set /a FILES_SKIPPED+=1
+) else (
+    REM File doesn't exist, can move
+    if "%DRY_RUN%"=="true" (
+        echo [DRY RUN] Would move: %FILE_NAME% ^-^> %TARGET_FOLDER%
+        set /a FILES_MOVED+=1
+    ) else (
+        move "%FILE_PATH%" "%DESKTOP_PATH%\%TARGET_FOLDER%\" >nul 2>&1
+        if !errorlevel! equ 0 (
+            echo Moved: %FILE_NAME% ^-^> %TARGET_FOLDER%
+            set /a FILES_MOVED+=1
+        ) else (
+            echo Error moving: %FILE_NAME%
+        )
+    )
+)
+goto :eof
+
+REM Function to move other files
+:MoveOtherFiles
+for %%f in ("%DESKTOP_PATH%\*.*") do (
+    if exist "%%f" (
+        call :ProcessFile "%%f" "other"
     )
 )
 goto :eof
