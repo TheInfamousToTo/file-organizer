@@ -1,7 +1,5 @@
 # Desktop Organizer - Windows Edition
 
-[![GitHub Activity](https://img.shields.io/badge/📈_Pulse-Activity-blue?logo=github)](https://github.com/TheInfamousToTo/file-organizer/pulse)
-
 A powerful file organization tool **specifically optimized for Windows systems**. Available in both Python and Windows Batch versions. Automatically organizes files on your desktop into categorized folders based on file types.
 
 ## 🪟 Windows-First Design
@@ -251,3 +249,7 @@ MIT License - see LICENSE file for details.
 This software is provided as is, without any warranty or liability. Use it at your own risk. Make sure you have a backup of your files before running the script. The authors are not responsible for any loss or damage caused by this software.
 
 We appreciate feedback on this project and welcome suggestions for improvements. If you can contribute by adding features (such as GUI interface, icons, etc.), that would be greatly appreciated.
+
+## 📊 Repository Activity
+
+![Alt](https://repobeats.axiom.co/api/embed/0f3bd11d47f0f25fde1fcbff701c73771bb79418.svg "Repobeats analytics image")
